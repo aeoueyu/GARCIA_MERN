@@ -20,7 +20,42 @@ function App() {
       });
   }, []);
 
-  async function handleCreate(event) {
+  // async function handleCreate(event) {
+  //   event.preventDefault();
+  //   setMessage('');
+
+  // if (!name.trim || !course.trim || !age) {
+  //   setMessage('Complete all fields');
+  //   return;
+  // }
+
+  //   try {
+  //     const response = await axios.post(
+  //       `http://localhost:5000/students`,
+  //       {
+  //         name: name.trim(),
+  //         course: course.trim(),
+  //         age: Number(age)
+  //       }
+  //     );
+
+  //     setStudents((currentStudents) => [
+  //       ...currentStudents,
+  //       response.data.student
+  //     ]);
+
+  //     setName('');
+  //     setCourse('');
+  //     setAge('');
+  //     setMessage(response.data.message);
+  //   }
+  //   catch (error) {
+  //     console.error('Create error: ', error);
+  //     setMessage('Unable to create student');
+  //   }
+  // }
+
+  async function handleSubmit(event) {
     event.preventDefault();
     setMessage('');
 
@@ -29,29 +64,50 @@ function App() {
       return;
     }
 
+    const studentData = {
+      name: name.trim(),
+      course: course.trim(),
+      age: Number(age)
+    };
+
     try {
-      const response = await axios.post(
-        `http://localhost:5000/students`,
-        {
-          name: name.trim(),
-          course: course.trim(),
-          age: Number(age)
-        }
-      );
+      if (updatingId) {
+        const response = await axios.put(
+          `http://localhost:5000/students/${updatingId}`,
+          studentData
+        );
+        setStudents((currentStudents) =>
+          currentStudents.map((student) =>
+            student._id === updatingId ? response.data.student : student
+          )
+        );
 
-      setStudents((currentStudents) => [
-        ...currentStudents,
-        response.data.student
-      ]);
+        setMessage(response.data.message);
+      }
+      else {
+        const response = await axios.post(
+          'http://localhost:5000/students',
+          studentData
+        );
 
-      setName('');
-      setCourse('');
-      setAge('');
-      setMessage(response.data.message);
+        setStudents((currentStudents) => [
+          ...currentStudents,
+          response.sata.student
+        ]);
+
+        setMessage(response.data.message);
+      }
+      resetForm();
     }
     catch (error) {
-      console.error('Create error: ', error);
-      setMessage('Unable to create student');
+      console.error('Save error: ', error);
+
+      if (updatingId) {
+        setMessage('Unable to update student');
+      }
+      else {
+        setMessage('Unable to create student');
+      }
     }
   }
 
@@ -106,7 +162,7 @@ function App() {
       {/* <p>Connecting to the server...</p> */}
       {/* <h2>Students</h2> */}
 
-      <form onSubmit={handleCreate}>
+      <form onSubmit={handleSubmit}>
         {/* <h2>ADD STUDENT</h2> */}
 
         <h2>{updatingId ? 'Edit Student' : 'Add Student'}</h2>
@@ -139,6 +195,10 @@ function App() {
         <br /> <br />
         {/* <button type='submit'>ADD STUDENT</button> */}
         <button type='submit'>{updatingId ? 'UPDATE STUDENT' : 'ADD STUDENT'}</button>
+
+        {updatingId && (
+          <button type='button' onClick={resetForm}>CANCEL</button>
+        )}
       </form>
 
       <table>
