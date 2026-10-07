@@ -92,7 +92,7 @@ function App() {
 
         setStudents((currentStudents) => [
           ...currentStudents,
-          response.sata.student
+          response.data.student
         ]);
 
         setMessage(response.data.message);
