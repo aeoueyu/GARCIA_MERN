@@ -14,7 +14,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/students')
+      .get('http://garcia-mern-backend.vercel.app/students')
       .then((response) => {
         setStudents(response.data);
       });
@@ -73,7 +73,7 @@ function App() {
     try {
       if (updatingId) {
         const response = await axios.put(
-          `http://localhost:5000/students/${updatingId}`,
+          `http://garcia-mern-backend.vercel.app/students/${updatingId}`,
           studentData
         );
         setStudents((currentStudents) =>
@@ -86,7 +86,7 @@ function App() {
       }
       else {
         const response = await axios.post(
-          'http://localhost:5000/students',
+          'http://garcia-mern-backend.vercel.app/students',
           studentData
         );
 
@@ -116,7 +116,7 @@ function App() {
 
     try {
       const response = await axios.delete(
-        `http://localhost:5000/students/${id}`
+        `http://garcia-mern-backend.vercel.app/students/${id}`
       );
 
       setStudents((currentStudents) =>
